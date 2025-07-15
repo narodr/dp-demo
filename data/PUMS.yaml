@@ -1,0 +1,26 @@
+PUMS:
+  PUMS:
+    PUMS:
+      row_privacy: True
+      # https://docs.smartnoise.org/sql/metadata.html
+      # Don't drop off group by keys. Assume this is public knowledge, and always >> 0
+      censor_dims: False
+      rows: 1000
+      age:
+        type: int
+        lower: 0
+        upper: 100
+      binned_age:
+        type: string
+      sex:
+        type: string
+      educ:
+        type: string
+      race:
+        type: string
+      income:
+        type: int
+        lower: 0
+        upper: 500000
+      married:
+        type: string

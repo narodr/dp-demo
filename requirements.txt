@@ -1,0 +1,6 @@
+streamlit
+numpy
+pandas
+altair
+smartnoise-sql
+marimo
