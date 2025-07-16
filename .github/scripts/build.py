@@ -68,14 +68,9 @@ def _export_html_wasm(notebook_path: Path, output_dir: Path, as_app: bool = Fals
 
 
 def main(
-    output_dir: Union[str, Path] = "_site"
+    output_dir: Union[str, Path] = ""
 ) -> None:
-    """Main function to export marimo notebooks.
-
-    This function:
-    1. Parses command line arguments
-    2. Exports all marimo notebooks in the 'notebooks' and 'apps' directories
-    3. Generates an index.html file that lists all the notebooks
+    """Main function to export a marimo notebooks.
 
     Command line arguments:
         --output-dir: Directory where the exported files will be saved.
