@@ -26,6 +26,7 @@ jobs:
       - name: ✏️ Rename notebook.html to index.html
         run: |
           mv notebooks/notebook.html notebooks/index.html
+          tree notebooks
       - name: 📤 Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
