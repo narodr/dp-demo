@@ -1,7 +1,8 @@
 import altair as alt
-import streamlit as st
+import marimo as mo
 
-def gen_tradeoff_chart(epsilon_choice, line_plot_df):
+
+def gen_tradeoff_chart(epsilon_choice, alpha, query, meta_path, line_plot_df):  
   # Tutorial from https://altair-viz.github.io/gallery/multiline_tooltip.html
   source = line_plot_df
   # The basic line
@@ -47,5 +48,5 @@ def gen_tradeoff_chart(epsilon_choice, line_plot_df):
     epsilon_choice=f"{epsilon_choice}"
   )
 
-  st.altair_chart(line_plot + selectors + points + rules + text + chosen_epsilon_rule, use_container_width=True)
-
+  chart = mo.ui.altair_chart(line_plot + selectors + points + rules + text + chosen_epsilon_rule)
+  return chart

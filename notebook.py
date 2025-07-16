@@ -1,13 +1,17 @@
 import marimo
 
 __generated_with = "0.14.10"
-app = marimo.App(app_title="")
+app = marimo.App(width="medium", app_title="")
 
 
 @app.cell
 def _():
     import marimo as mo
-    return (mo,)
+    import utils.plot as plot
+    import utils.dp as dp
+    import numpy as np
+    import pandas as pd
+    return dp, mo, np, pd, plot
 
 
 @app.cell
@@ -34,44 +38,7 @@ def _(mo):
 
 
 @app.cell
-def _(data, mo):
-    mo.accordion(
-        {
-            "Datos brutos": data
-        }
-    )
-    return
-
-
-@app.cell
 def _(mo):
-    mo.md(
-        r"""
-    ## Primer ejemplo: conteo
-
-    La situación es esta: queremos publicar una estadística
-    """
-    )
-    return
-
-
-@app.cell
-def _(epsilon, mo):
-    mo.md(f"""El parámetro **épsilon** {epsilon} mide de manera inversa el nivel de privacidad: A menor epsilon, mayor será la privacidad que ofrece del mecanismo.""")
-    return
-
-
-@app.cell
-def _(mo):
-    epsilon = mo.ui.slider(0.1, 10, 0.1, label="ε")
-    epsilon
-    return (epsilon,)
-
-
-@app.cell(hide_code=True)
-def _(epsilon, mo):
-    import utils.dp as dp
-
     data = mo.sql(
         f"""
         SELECT 
@@ -88,31 +55,82 @@ def _(epsilon, mo):
         """
     )
 
+    mo.accordion(
+        {
+            "Datos brutos": data
+        }
+    )
+    return (data,)
+
+
+@app.cell
+def _(mo):
+    mo.md(
+        r"""
+    ## Primer ejemplo: conteo
+
+    La situación es esta: queremos publicar una estadística
+    """
+    )
+    return
+
+
+@app.cell
+def _(mo):
+    epsilon = mo.ui.slider(0.1, 10, 0.1, label="ε")
+    epsilon
+    return (epsilon,)
+
+
+@app.cell
+def _(mo):
+    alpha = mo.ui.slider(0.01, 0.1, 0.01, label="α")
+    alpha
+    return (alpha,)
+
+
+@app.cell
+def _(epsilon, mo):
+    mo.md(f"""El parámetro épsilon = {epsilon.value} mide de manera inversa el nivel de privacidad: A menor epsilon, mayor será la privacidad que ofrece del mecanismo.""")
+    return
+
+
+@app.cell
+def _(alpha, data, dp, epsilon, mo):
     query = """
     SELECT binned_age, COUNT(*)
     FROM PUMS.PUMS
     GROUP BY binned_age
     """
-    unnoised_result=dp.get_unnoised_result(data)
-    groupby_keys = sorted(list(unnoised_result.keys()))
 
-    df = dp.compute_all_stats(epsilon.value, 0.05, groupby_keys=groupby_keys, data=data, query=query, meta_path='data/PUMS.yaml')
-    df
-    # mo.ui.table(data=df, pagination=False, freeze_columns_left=['Age bin', 'Exact result', 'Noised result'])
-    return data, dp, query
+    df = dp.compute_all_stats(epsilon.value, alpha.value, 
+                              data=data,
+                              query=query,
+                              meta_path='data/PUMS.yaml'
+                             )
+
+    mo.ui.table(df, freeze_columns_left= ["Age bin", "Exact result", "Noised result"])
+    return (query,)
 
 
 @app.cell
-def _(data, dp, epsilon, query):
-    import utils.plot as plot
-    import numpy as np
-    import pandas as pd
+def _(alpha, data, dp, epsilon, np, pd, query):
+    x = np.linspace(epsilon.start, epsilon.stop, num = int((epsilon.stop - epsilon.start) / epsilon.step))
+    y = np.array([dp.get_abs_error(data, query, eps, alpha=alpha.value, meta_path='data/PUMS.yaml') for eps in x]) / 100.0
+    line = pd.DataFrame({"epsilon": x, "percent_error": y})
+    return (line,)
 
-    x = np.linspace(.1, 10, num = int((10 - .1) / .1))
-    y = np.array([dp.get_abs_error(data, query, epsilon.value, .05, 'data/PUMS.yaml') for eps in x]) * 100.0
-    line_plot_df = pd.DataFrame({"epsilon": x, "percent_error": y})
 
-    plot.gen_tradeoff_chart(epsilon.value, line_plot_df)
+@app.cell
+def _(alpha, epsilon, line, plot, query):
+    chart = plot.gen_tradeoff_chart(epsilon.value, 
+                           alpha.value, 
+                           query, 
+                           meta_path='data/PUMS.yaml',
+                           line_plot_df=line
+                          )
+
+    chart
     return
 
 

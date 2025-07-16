@@ -41,7 +41,9 @@ def get_abs_error(data, query, epsilon, alpha, meta_path):
 def alpha_to_percent_conf(alpha):
   return f"{int((1-alpha) * 100)}%"
 
-def compute_all_stats(epsilon, alpha, groupby_keys, data, query, meta_path):
+def compute_all_stats(epsilon, alpha, data, query, meta_path):
+  unnoised_result = get_unnoised_result(data)
+  groupby_keys = sorted(list(unnoised_result.keys()))
   percent_conf = alpha_to_percent_conf(alpha)
   unnoised_result = get_unnoised_result(data)
   noised_result = get_noised_result(epsilon, data, query, meta_path)
@@ -60,4 +62,9 @@ def compute_all_stats(epsilon, alpha, groupby_keys, data, query, meta_path):
   # Do math: expectation of abs(laplace(1/epsi))
   df[f"Expected error"] = 1.0 / epsilon
   df[f"Expected error %"] = 100.0 * df[f"Expected error"] / df["Noised result"]
+
+  # Round float columns to 2 decimal places
+  float_cols = df.select_dtypes(include='float').columns
+  df[float_cols] = df[float_cols].round(4)
+  
   return df
