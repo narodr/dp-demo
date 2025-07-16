@@ -22,11 +22,11 @@ jobs:
       - name: 🛠️ Export notebooks
         run: |
           uv run .github/scripts/build.py
-          tree _site
+          tree notebooks
       - name: 📤 Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: _site
+          path: notebooks
 
   deploy:
     needs: build
