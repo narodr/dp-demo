@@ -83,7 +83,7 @@ def main(
     logger.info(f"Output directory: {output_dir}")
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    notebooks_data = _export_html_wasm(Path("notebooks/notebook.py"), 
+    notebooks_data = _export_html_wasm(Path("notebook.py"), 
                                        output_dir, as_app=True)
     if not notebooks_data:
         logger.warning("No notebooks or apps found!")
