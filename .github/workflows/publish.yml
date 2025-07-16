@@ -23,9 +23,6 @@ jobs:
         run: |
           uv run .github/scripts/build.py
           tree notebooks
-      - name: 🗂️ Copy utils folder into notebooks
-        run: |
-          cp -r utils/ notebooks/
       - name: ✏️ Rename notebook.html to index.html
         run: |
           mv notebooks/notebook.html notebooks/index.html
