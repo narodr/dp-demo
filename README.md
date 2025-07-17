@@ -1,7 +1,16 @@
 Una introducción a la privacidad diferencial
 
-## Referencias
+### Editar el notebook
 
-https://desfontain.es/blog/friendly-intro-to-differential-privacy.html
+Clona el repositorio, instala las dependencias y ejecuta:
 
-https://github.com/sjonany/diff-privacy-tradeoff-streamlit/tree/main?tab=readme-ov-file
+```
+marimo edit notebook.py
+```
+
+Se abrirá el notebook en modo editable.
+
+### Referencias
+
+- https://desfontain.es/blog/friendly-intro-to-differential-privacy.html
+- https://github.com/sjonany/diff-privacy-tradeoff-streamlit/tree/main?tab=readme-ov-file
